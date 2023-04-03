@@ -1,10 +1,15 @@
 #pragma once
 
-struct node
+struct value
 {
 	int x;
 	int count = 1;
-	int height = 0;
+};
+
+struct node
+{
+	value v;
+	int height = 1;
 	node* left = nullptr;
 	node* right = nullptr;
 };
