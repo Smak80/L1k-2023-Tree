@@ -1,10 +1,15 @@
 #include "tree.h"
+using namespace std;
 
 bool add(node*& root, int value);
 int find(const node* root, int value);
 bool remove(node*& root, int val);
 void drop(node*& root);
 int get_height(const node* root);
+
+void prefix_traverse(node* root, queue<node*>& q);
+void infix_traverse(node* root, queue<node*>& q);
+void postfix_traverse(node* root, queue<node*>& q);
 
 bool add(tree& t, int value)
 {
@@ -78,6 +83,56 @@ void drop(tree& t)
 {
 	drop(t.root);
 }
+
+queue<node*> prefix_traverse(tree& t)
+{
+	queue<node*> q;
+	prefix_traverse(t.root, q);
+	return q;
+}
+
+void prefix_traverse(node* root, queue<node*>& q)
+{
+	if (root) {
+		q.push(root);
+		prefix_traverse(root->left, q);
+		prefix_traverse(root->right, q);
+	}
+}
+
+queue<node*> infix_traverse(tree& t)
+{
+	queue<node*> q;
+	infix_traverse(t.root, q);
+	return q;
+}
+
+void infix_traverse(node* root, queue<node*>& q)
+{
+	if (root) {
+		infix_traverse(root->left, q);
+		q.push(root);
+		infix_traverse(root->right, q);
+	}
+}
+
+queue<node*> postfix_traverse(tree& t)
+{
+	queue<node*> q;
+	postfix_traverse(t.root, q);
+	return q;
+}
+
+void postfix_traverse(node* root, queue<node*>& q)
+{
+	if (root) {
+		postfix_traverse(root->left, q);
+		postfix_traverse(root->right, q);
+		q.push(root);
+	}
+}
+
+
 
 void drop(node*& root)
 {
