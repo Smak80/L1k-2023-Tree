@@ -42,31 +42,38 @@ void remove_leaf(node*& parent, node*& rem, bool is_sub_right, value& saved_valu
 
 bool remove(node*& root, int val)
 {
-	// 1. ���� ��������� �������
+	// 1. Если дерево не пустое
 	if (root)
 	{
-		if (root->v.x != val) { // ������� ���� �� ������
-			auto res = remove(val < root->v.x ? root->left : root->right, val);
-			if (res) root->height = get_height(root);
-			return res;
+		if (root->v.x != val) {
+		    //Рекурсивно спускаемся по дереву выбирая ветки
+		    //Условием выше ждём пока элемент не станет корневым какого-то из поддеревьев
+		    auto res = remove(val < root->v.x ? root->left : root->right, val);
+
+		    if (res) root->height = get_height(root);
+		    return res;
 		}
-		// ������� ������
-		// 2. ���������� ����� �� ����������� ����
+		
+		// Элемент корень какого-то поддерева
+		// 2. Смотрим на высоту ветвей этого поддерева
 		auto lh = get_height(root->left);
 		auto rh = get_height(root->right);
-		if (lh == 0 && rh == 0) // ��������� ������� - ����
+		if (lh == 0 && rh == 0) // Если этот элемент лист, то удаляем
 		{
-			delete root;
-			return true;
+		    delete root;
+		    return true;
 		}
 		auto is_sub_right = lh < rh;
-		// 3. ����� ����������� �������� � ������ ���������
+		
+		// 3. Заменяем элемент минимальным значением
+		// из правого поддерева или максимальным из левого
 		auto* rem = (is_sub_right) ? root->right : root->left;
 		value saved_value;
 		remove_leaf(root, rem, is_sub_right, saved_value);
 		root->v = saved_value;
 		return true;
 	}
+	
 	return false;
 }
 
