@@ -1,6 +1,14 @@
 #include "tree.h"
 
+#include <cstdlib>
+
 using namespace std;
+
+void small_left_rotate(node*& root);
+void small_right_rotate(node*& root);
+void big_left_rotate(node*& root);
+void big_right_rotate(node*& root);
+void balance(node*& root);
 
 bool add(node*& root, int value);
 int find(const node* root, int value);
@@ -12,6 +20,59 @@ void prefix_traverse(node* root, queue& q);
 void infix_traverse(node* root, queue& q);
 void postfix_traverse(node* root, queue& q);
 void wide_traverse(node* root, queue& q);
+
+
+void small_left_rotate(node*& root)
+{
+	node* new_root = root->right;
+	root->right = new_root->left;
+	new_root->left = root;
+	root->height = get_height(root);
+	root = new_root;
+}
+void small_right_rotate(node*& root)
+{
+	node* new_root = root->left;
+	root->left = new_root->right;
+	new_root->right = root;
+	root->height = get_height(root);
+	root = new_root;
+}
+void big_left_rotate(node*& root)
+{
+	small_right_rotate(root->right);
+	small_left_rotate(root);
+}
+void big_right_rotate(node*& root)
+{
+	small_left_rotate(root->left);
+	small_right_rotate(root);
+}
+void balance(node*& root)
+{
+	if (not root) return;
+
+	int lh = get_height(root->left);
+	int rh = get_height(root->right);
+
+	if (abs(lh - rh) > 1)
+	{
+		if (lh > rh)
+		{
+			int l_lh = get_height(root->left->left);
+			int l_rh = get_height(root->left->right);
+			if (l_lh > l_rh) small_right_rotate(root);
+			else big_right_rotate(root);
+		}
+		else
+		{
+			int r_lh = get_height(root->right->left);
+			int r_rh = get_height(root->right->right);
+			if (r_rh > r_lh) small_left_rotate(root);
+			else big_left_rotate(root);
+		}
+	}
+}
 
 bool add(tree& t, int value)
 {
@@ -39,6 +100,7 @@ void remove_leaf(node*& parent, node*& rem, bool is_sub_right, value& saved_valu
 		rem = is_sub_right ? rem->right : rem->left;
 		delete del;
 	}
+	balance(parent);
 	parent->height = get_height(parent);
 }
 
@@ -180,6 +242,7 @@ bool add(node*& root, int value)
 		return false;
 	}
 	const auto result = add(value < root->v.x ? root->left : root->right, value);
+	balance(root);
 	if (result) root->height = get_height(root);
 	return result;
 }

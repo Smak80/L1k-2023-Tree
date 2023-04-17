@@ -20,7 +20,7 @@ void show_elems(tree t, traverse_type tt)
 	{
 		const auto v = curr->tree_node;
 		if (!v) cout << "[-]";
-		else cout << (char)(v->v.x) << "(" << v->v.count << ")";
+		else cout << (v->v.x) << "(" << v->v.count << "; " << v->height << ")";
 		cout << " ";
 		curr = curr->next;
 	}
@@ -33,15 +33,19 @@ void main()
 	setlocale(LC_ALL, "");
 	tree t;
 	//int a[] = { 0, 5, 20, 30, 40, 28, 26, 24, 21, 22, 23 };
-	int a[] = { 'F', 'B', 'G', 'A', 'D', 'I', 'C', 'E', 'H' };
+	//int a[] = { 'B', 'A', 'D', 'C', 'E', 'F'};
+	int a[] = { 6,3,10,1,4,8,12,14 };
 	for (int i : a)
 	{
 		add(t, i);
 	}
-	show_elems(t, prefix);
-	show_elems(t, infix);
-	show_elems(t, postfix);
+	//show_elems(t, prefix);
+	//show_elems(t, infix);
+	//show_elems(t, postfix);
 	show_elems(t, wide);
-	remove(t, 20);
+	remove(t, 1);
+	show_elems(t, wide);
+	remove(t, 4);
+	show_elems(t, wide);
 	drop(t);
 }
