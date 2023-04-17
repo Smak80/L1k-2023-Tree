@@ -1,4 +1,5 @@
 #include "tree.h"
+
 using namespace std;
 
 bool add(node*& root, int value);
@@ -7,9 +8,10 @@ bool remove(node*& root, int val);
 void drop(node*& root);
 int get_height(const node* root);
 
-void prefix_traverse(node* root, queue<node*>& q);
-void infix_traverse(node* root, queue<node*>& q);
-void postfix_traverse(node* root, queue<node*>& q);
+void prefix_traverse(node* root, queue& q);
+void infix_traverse(node* root, queue& q);
+void postfix_traverse(node* root, queue& q);
+void wide_traverse(node* root, queue& q);
 
 bool add(tree& t, int value)
 {
@@ -84,55 +86,75 @@ void drop(tree& t)
 	drop(t.root);
 }
 
-queue<node*> prefix_traverse(tree& t)
+queue prefix_traverse(tree& t)
 {
-	queue<node*> q;
+	queue q;
 	prefix_traverse(t.root, q);
 	return q;
 }
 
-void prefix_traverse(node* root, queue<node*>& q)
+void prefix_traverse(node* root, queue& q)
 {
 	if (root) {
-		q.push(root);
+		enqueue(q, root);
 		prefix_traverse(root->left, q);
 		prefix_traverse(root->right, q);
 	}
 }
 
-queue<node*> infix_traverse(tree& t)
+queue infix_traverse(tree& t)
 {
-	queue<node*> q;
+	queue q;
 	infix_traverse(t.root, q);
 	return q;
 }
 
-void infix_traverse(node* root, queue<node*>& q)
+void infix_traverse(node* root, queue& q)
 {
 	if (root) {
 		infix_traverse(root->left, q);
-		q.push(root);
+		enqueue(q, root);
 		infix_traverse(root->right, q);
 	}
 }
 
-queue<node*> postfix_traverse(tree& t)
+queue postfix_traverse(tree& t)
 {
-	queue<node*> q;
+	queue q;
 	postfix_traverse(t.root, q);
 	return q;
 }
 
-void postfix_traverse(node* root, queue<node*>& q)
+void postfix_traverse(node* root, queue& q)
 {
 	if (root) {
 		postfix_traverse(root->left, q);
 		postfix_traverse(root->right, q);
-		q.push(root);
+		enqueue(q, root);
 	}
 }
 
+queue wide_traverse(tree& t)
+{
+	queue q;
+	wide_traverse(t.root, q);
+	return q;
+}
 
+void wide_traverse(node* root, queue& q)
+{
+	if (root) {
+		auto h = root->height;
+		enqueue(q, root);
+		queue_elem* curr = q.first;
+		for (int i = 1; i < (1 << h) - 1; i+=2)
+		{
+			enqueue(q, curr->tree_node ? curr->tree_node->left : nullptr);
+			enqueue(q, curr->tree_node ? curr->tree_node->right : nullptr);
+			curr = curr->next;
+		}
+	}
+}
 
 void drop(node*& root)
 {
